@@ -1,27 +1,58 @@
-import React, {useEffect, useState} from 'react';
-import logo from './logo.svg';
+import React, {useEffect, useState, useContext} from 'react';
 import './App.css';
-import app from "./fbase"
-import {navigate} from "hookrouter";
-import * as firebase from "firebase/app";
-import 'firebase/firestore';
+import M from "materialize-css/dist/js/materialize.min.js";
+import "materialize-css/dist/css/materialize.min.css";
+import SideBar from "./components/SideBar/SideBar";
+import { AppProvider} from "./AppContext";
+import Content from "./components/Content/Content";
+import styled from 'styled-components';
+
+
+function getDimensions() {
+  return {"width":window.innerWidth, "height":window.innerHeight}
+}
+
 
 function App() {
 
+  const [windowWidth, setWidth] = useState(getDimensions()["width"]);
+  const [windowHeight, setHeight] = useState(getDimensions()["height"]);
+  // const {mains} = useContext(AppContext)
+
   useEffect(()=>{
-    async function getFBase() {
-      const db = await firebase.firestore(app);
-      let mainsDB = await db.collection(`mains`).get();
-      console.log(mainsDB.docs.map(doc => doc.data()))
-    }
-    getFBase();
 
-  },[])
+    var elem = document.querySelector(".sidenav");
+    var instance = M.Sidenav.init(elem, {
+      edge: "left",
+      inDuration: 250
+    });
+
+  },[windowWidth,windowHeight])
+
+  const handleResize =()=> {
+    setWidth(getDimensions()["width"]);
+    setHeight(getDimensions()["height"]);
+  };
+
+  window.addEventListener('resize', handleResize);
+
+
+
+
   return (
-    <div className="App">
+    <AppContainer className="App">
+    <AppProvider >
 
-    </div>
+      <SideBar />
+      <Content width={windowWidth}/>
+
+    </AppProvider>
+    </AppContainer>
   );
 }
 
 export default App;
+const AppContainer  = styled.div`
+  height: 100vh;
+  width: 100%;
+    `
