@@ -16,15 +16,20 @@ export const AppProvider = ({children}) => {
 
     useEffect(()=>{
         console.log('calling firebase');
+        let sidesAccum = [];
         let mainsAccum = [];
 
         async function getFBase() {
             let mainsDB = await firebase.firestore(app).collection(`mains`).get();
-            mainsDB.docs.map(doc =>mainsAccum.push(doc.data()))
+            mainsDB.docs.map(doc =>mainsAccum.push(doc.data()));
+
+            let sidesDB = await firebase.firestore(app).collection(`sides`).get();
+            sidesDB.docs.map(doc =>sidesAccum.push(doc.data()));
 
         }
         getFBase().then(()=>{
             setMains(mainsAccum);
+            setSides(sidesAccum);
             console.log("firebase called");
         });
 
